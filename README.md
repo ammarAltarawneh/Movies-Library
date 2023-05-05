@@ -7,16 +7,24 @@
 
 ## Overview
 We are going to build some routes to our web page:  
-1- Home Page Endpoint: /  
-2- Favorite Page Endpoint: “/favorite”  
-3- Handle errors: server error (status 500) and "page not found error" (status 404)
+1- Home Page Endpoint  
+2- Favorite Page Endpoint  
+3- Trending Page Endpoint   
+4- Search Page Endpoint   
+5- Top rated Page Endpoint  
+6- Similar Movies Page Endpoint   
+7- Handle errors: server error  and "page not found error"
 ## Getting Started
 1- clone the repo to your local machine  
-2- intsall express  
+2- intsall express , cors , dotenv , axios  
 3- type npm start in terminal  
 
 ## Project Features
 "/" : Home Page Endpoint  
-"/favorite": Favorite Page Endpoint  
-" " : server error (500)  
+"/favorite": Favorite Page Endpoint   
+"/trending": Trending Page Endpoint  
+"/search": Search Page Endpoint  
+"/top_rated": Top rated Page Endpoint  
+"/similar_movies": Similar Movies Page Endpoint   
+" " : server error (500) 
 "*" : page not found (404)
