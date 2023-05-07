@@ -3,14 +3,18 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 require('dotenv').config();
+const pg = require('pg')
 
 const server = express();
 server.use(cors())
 
 const movieData = require('./Movie Data/data.json');
 const apiKey = process.env.APIkey;
+server.use(express.json())
+
 const PORT = 3000;
 
+const client = new pg.Client(process.env.DATABASE_URL)
 
 server.get('/', homeHandler)
 server.get('/favorite', favoritHandler)
@@ -18,6 +22,10 @@ server.get('/trending', trending)
 server.get('/search', search)
 server.get('/top_rated', topRated)
 server.get('/similar_movies', SimilarMovies);
+
+server.get('/addMovie', getMovieHandler)
+server.post('/addMovie', addMovieHandler)
+
 server.get('*', defaultHandler)
 
 ///////////// handler functions
@@ -94,11 +102,11 @@ function topRated(req, res) {
 }
 
 function SimilarMovies(req, res) {
-    try{
+    try {
         let url = `https://api.themoviedb.org/3/movie/10468/similar?api_key=${apiKey}&language=en-US&page=1`;
         axios.get(url)
             .then(result => {
-                
+
                 let similarMovie = result.data.results.map(item => {
                     let movie = new FilmInfo(item.id, item.title, item.release_date, item.poster_path, item.overview)
                     return movie;
@@ -108,11 +116,38 @@ function SimilarMovies(req, res) {
             .catch((error) => {
                 res.status(500).send(error);
             })
-        }
-        catch(error){
-            errorHandler(error,req,res);
-        }
     }
+    catch (error) {
+        errorHandler(error, req, res);
+    }
+}
+
+function getMovieHandler(req, res) {
+    const sql = `SELECT * FROM seriesrecipe`;
+    client.query(sql)
+        .then(data => {
+            res.send(data.rows);
+        })
+
+        .catch((error) => {
+            errorHandler(error, req, res)
+        })
+}
+
+function addMovieHandler(req,res) {
+    const recipe = req.body;
+    console.log(recipe);
+    const sql = `INSERT INTO seriesRecipe (title, releaseYear, overview)
+    VALUES ($1, $2, $3);`
+    const values = [recipe.title , recipe.releaseYear, recipe.overview]; 
+    client.query(sql,values)
+    .then(data=>{
+        res.send("The data has been added successfully");
+    })
+    .catch((error)=>{
+        errorHandler(error,req,res)
+    })
+}
 
 function defaultHandler(req, res) {
     res.status(404).send('Page not found')
@@ -127,10 +162,10 @@ server.use(function (err, req, res, next) {
     res.status(500).send(obj);
 });
 
-function errorHandler(error,req,res){
-    const err={
-        errNum:500,
-        msg:error
+function errorHandler(error, req, res) {
+    const err = {
+        errNum: 500,
+        msg: error
     }
 }
 
@@ -153,7 +188,10 @@ function Movie(title, poster_path, overview) {
     this.overview = overview;
 }
 
+client.connect()
+    .then(() => {
+        server.listen(PORT, () => {
+            console.log(`Listening on ${PORT}: I'm ready`)
+        })
+    })
 
-server.listen(PORT, () => {
-    console.log(`Listening on ${PORT}: I'm ready`)
-})
