@@ -186,7 +186,7 @@ function updateMovieHandler(req, res) {
 }
 
 function getSpecificMovieHandler(req, res){
-    const id  = req.query.id;
+    const id  = req.params.id;
     console.log(req.query);
     const sql = `SELECT * FROM seriesrecipe WHERE id = ${id}`;
     client.query(sql)
