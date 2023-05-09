@@ -25,6 +25,9 @@ server.get('/similar_movies', SimilarMovies);
 
 server.get('/addMovie', getMovieHandler)
 server.post('/addMovie', addMovieHandler)
+server.delete('/addMovie/:id', deleteMovieHandler)
+server.put('/addMovie/:id', updateMovieHandler)
+server.get('/addMovie/:id', getSpecificMovieHandler)
 
 server.get('*', defaultHandler)
 
@@ -134,19 +137,66 @@ function getMovieHandler(req, res) {
         })
 }
 
-function addMovieHandler(req,res) {
+function addMovieHandler(req, res) {
     const recipe = req.body;
     console.log(recipe);
     const sql = `INSERT INTO seriesRecipe (title, releaseYear, overview)
     VALUES ($1, $2, $3);`
-    const values = [recipe.title , recipe.releaseYear, recipe.overview]; 
-    client.query(sql,values)
-    .then(data=>{
-        res.send("The data has been added successfully");
-    })
-    .catch((error)=>{
-        errorHandler(error,req,res)
-    })
+    const values = [recipe.title, recipe.releaseYear, recipe.overview];
+    client.query(sql, values)
+        .then(data => {
+            res.send("The data has been added successfully");
+        })
+        .catch((error) => {
+            errorHandler(error, req, res)
+        })
+}
+
+function deleteMovieHandler(req, res) { // using path params
+    const id = req.params.id;
+
+    const sql = `DELETE FROM seriesRecipe WHERE id=${id};`
+    client.query(sql)
+        .then((data) => {
+            res.status(202).send(data)
+        })
+        .catch((error) => {
+            errorHandler(error, req, res)
+        })
+
+}
+
+function updateMovieHandler(req, res) {
+    // De-structuring 
+    const { id } = req.params;
+
+    const sql = `UPDATE seriesRecipe 
+    SET title = $1 , releaseYear = $2 , overview = $3 
+    WHERE id = ${id};`
+    const { title , releaseYear , overview} = req.body;
+    const values = [title, releaseYear, overview];
+    client.query(sql, values)
+        .then((data) => {
+            res.send(data)
+        })
+        .catch((error) => {
+            errorHandler(error, req, res)
+        })
+
+}
+
+function getSpecificMovieHandler(req, res){
+    const id  = req.query.id;
+    console.log(req.query);
+    const sql = `SELECT * FROM seriesrecipe WHERE id = ${id}`;
+    client.query(sql)
+        .then(data => {
+            res.send(data.rows);
+        })
+
+        .catch((error) => {
+            errorHandler(error, req, res)
+        })
 }
 
 function defaultHandler(req, res) {
