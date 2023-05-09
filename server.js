@@ -27,6 +27,7 @@ server.get('/addMovie', getMovieHandler)
 server.post('/addMovie', addMovieHandler)
 server.delete('/addMovie/:id', deleteMovieHandler)
 server.put('/addMovie/:id', updateMovieHandler)
+
 server.get('/addMovie/:id', getSpecificMovieHandler)
 
 server.get('*', defaultHandler)
@@ -173,7 +174,7 @@ function updateMovieHandler(req, res) {
     const sql = `UPDATE seriesRecipe 
     SET title = $1 , releaseYear = $2 , overview = $3 
     WHERE id = ${id};`
-    const { title , releaseYear , overview} = req.body;
+    const { title, releaseYear, overview } = req.body;
     const values = [title, releaseYear, overview];
     client.query(sql, values)
         .then((data) => {
@@ -185,15 +186,15 @@ function updateMovieHandler(req, res) {
 
 }
 
-function getSpecificMovieHandler(req, res){
-    const id  = req.params.id;
-    console.log(req.query);
+function getSpecificMovieHandler(req, res) {
+    const id = req.params.id; // we can use "const id  = req.query.id;" but first change the route for example:/getMovie
+                              // then you can type this url: http://localhost:3000/getMovie?id=10
+
     const sql = `SELECT * FROM seriesrecipe WHERE id = ${id}`;
     client.query(sql)
         .then(data => {
             res.send(data.rows);
         })
-
         .catch((error) => {
             errorHandler(error, req, res)
         })
