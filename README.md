@@ -28,5 +28,6 @@ We are going to build some routes to our web page:
 "/top_rated": Top rated Page Endpoint  
 "/similar_movies": Similar Movies Page Endpoint  
 "/addMovie": Harry Potter Series Page Endpoint   
+"/addMovie/id": Specific movie of Harry Potter Series Page Endpoint   
 " " : server error (500) 
 "*" : page not found (404)
