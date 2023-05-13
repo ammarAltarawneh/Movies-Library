@@ -23,10 +23,10 @@ server.get('/search', search)
 server.get('/top_rated', topRated)
 server.get('/similar_movies', SimilarMovies);
 
-server.get('/addMovie', getMovieHandler)
+server.get('/getMovie', getMovieHandler)
 server.post('/addMovie', addMovieHandler)
-server.delete('/addMovie/:id', deleteMovieHandler)
-server.put('/addMovie/:id', updateMovieHandler)
+server.delete('/deleteMovie/:id', deleteMovieHandler)
+server.put('/updateMovie/:id', updateMovieHandler)
 
 server.get('/addMovie/:id', getSpecificMovieHandler)
 
